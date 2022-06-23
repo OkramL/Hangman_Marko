@@ -1,10 +1,12 @@
 package views;
 
+import models.DataScores;
 import models.Model;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Klass View (Üldine)
@@ -13,15 +15,15 @@ public class View extends JFrame {
     /**
      * Mudel
      */
-    private Model model;
+    private final Model model;
     /**
      * Paneel mis sisaldab komponentide paneeli
      */
-    private ChoicesPanel choicesPanel; // ÜLemine paneel JButton, JTextField, JLabel komponentidele
+    private final ChoicesPanel choicesPanel; // ÜLemine paneel JButton, JTextField, JLabel komponentidele
     /**
      * Paneel mis näitab äraarvatava sõna näitamist
      */
-    private WordPanel wordPanel; // Paneel kus on äraarvatav sõna (algeselt H A K K A M E  M Ä N G I M A)
+    private final WordPanel wordPanel; // Paneel kus on äraarvatav sõna (algeselt H A K K A M E  M Ä N G I M A)
 
     /**
      * Konstruktor
@@ -33,7 +35,6 @@ public class View extends JFrame {
         this.setPreferredSize(new Dimension(420,220)); // Frame suurus
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Et aken sulguks
         this.setLayout(new BorderLayout()); // Layout
-
 
         this.model = model; // View tahab ka modelit kasutada
 
@@ -161,5 +162,20 @@ public class View extends JFrame {
         getTxtChar().setText("");   // Sisestatud tähe tühjendamine
         getLblWrongInfo().setText("Valesti 0 täht(e). "); // Muuda vigade teavitus vaikimisi tekstiks
         getLblWrongInfo().setForeground(Color.BLACK); // Muuda teksti värv vaikimsii mustaks
+    }
+
+    /**
+     * See uuendab JDialog aknas JTabel infot
+     */
+    public void updateTable() {
+        model.getDtm().setRowCount(0);
+        String gametime = null;
+        for (DataScores ds : model.getDataScores()) {
+            gametime = ds.getGameTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
+            String name = ds.getPlayerName();
+            String word = ds.getGuessWord();
+            String chars = ds.getMissingLetters();
+            model.getDtm().addRow(new Object[]{gametime, name, word, chars});
+        }
     }
 }
